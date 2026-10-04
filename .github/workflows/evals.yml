@@ -36,8 +36,10 @@ jobs:
           exit 1
 
       - name: Run evals
-        run: python evals/run_evals.py --fail-under 0.75
-
-      - name: Show backend log on failure
-        if: failure()
-        run: cat backend/server.log
+        run: |
+          python evals/run_evals.py --fail-under 0.75 || {
+            echo ""
+            echo "=========== SERVER LOG (last 60 lines) ==========="
+            tail -n 60 backend/server.log
+            exit 1
+          }
