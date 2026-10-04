@@ -182,6 +182,19 @@ def load_eval_file(filename):
         return json.load(file)
 
 
+def pick(metrics, *keys, default=0):
+    """
+    Return the first metric that exists under any of the given key names.
+    Result files have used different names for the same metric.
+    """
+
+    for key in keys:
+        if key in metrics and metrics[key] is not None:
+            return metrics[key]
+
+    return default
+
+
 @api.get("/evals")
 def get_evals():
     """
@@ -200,24 +213,26 @@ def get_evals():
         "version": v2.get("version", "v2"),
         "total_cases": v2.get("total_cases", 0),
 
-        "correctness": v2_metrics.get(
+        "correctness": pick(
+            v2_metrics,
             "correctness",
-            0
+            "correctness_average"
         ),
 
-        "citation_accuracy": v2_metrics.get(
-            "citation_accuracy",
-            0
+        "citation_accuracy": pick(
+            v2_metrics,
+            "citation_accuracy"
         ),
 
-        "escalation_accuracy": v2_metrics.get(
-            "escalation_accuracy",
-            0
+        "escalation_accuracy": pick(
+            v2_metrics,
+            "escalation_accuracy"
         ),
 
-        "avg_latency_ms": v2_metrics.get(
+        "avg_latency_ms": pick(
+            v2_metrics,
             "avg_latency_ms",
-            0
+            "average_latency_ms"
         ),
 
         "token_cost": v2_metrics.get(
@@ -235,21 +250,23 @@ def get_evals():
                     "version",
                     "v1"
                 ),
-                "correctness": v1_metrics.get(
+                "correctness": pick(
+                    v1_metrics,
                     "correctness",
-                    0
+                    "correctness_average"
                 ),
-                "citation_accuracy": v1_metrics.get(
-                    "citation_accuracy",
-                    0
+                "citation_accuracy": pick(
+                    v1_metrics,
+                    "citation_accuracy"
                 ),
-                "escalation_accuracy": v1_metrics.get(
-                    "escalation_accuracy",
-                    0
+                "escalation_accuracy": pick(
+                    v1_metrics,
+                    "escalation_accuracy"
                 ),
-                "avg_latency_ms": v1_metrics.get(
+                "avg_latency_ms": pick(
+                    v1_metrics,
                     "avg_latency_ms",
-                    0
+                    "average_latency_ms"
                 ),
             },
             {
@@ -257,21 +274,23 @@ def get_evals():
                     "version",
                     "v2"
                 ),
-                "correctness": v2_metrics.get(
+                "correctness": pick(
+                    v2_metrics,
                     "correctness",
-                    0
+                    "correctness_average"
                 ),
-                "citation_accuracy": v2_metrics.get(
-                    "citation_accuracy",
-                    0
+                "citation_accuracy": pick(
+                    v2_metrics,
+                    "citation_accuracy"
                 ),
-                "escalation_accuracy": v2_metrics.get(
-                    "escalation_accuracy",
-                    0
+                "escalation_accuracy": pick(
+                    v2_metrics,
+                    "escalation_accuracy"
                 ),
-                "avg_latency_ms": v2_metrics.get(
+                "avg_latency_ms": pick(
+                    v2_metrics,
                     "avg_latency_ms",
-                    0
+                    "average_latency_ms"
                 ),
             },
         ],
