@@ -33,6 +33,7 @@ api.add_middleware(
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -162,19 +163,16 @@ def get_runs():
 def load_eval_file(filename):
     """
     Load an evaluation JSON file using UTF-8.
-    The files live one level above the backend directory.
+    Looks in backend/eval_results first (used when deployed),
+    then falls back to evals/results one level above backend.
     """
 
     backend_dir = Path(__file__).resolve().parent
 
-    project_dir = backend_dir.parent
+    file_path = backend_dir / "eval_results" / filename
 
-    file_path = (
-        project_dir
-        / "evals"
-        / "results"
-        / filename
-    )
+    if not file_path.exists():
+        file_path = backend_dir.parent / "evals" / "results" / filename
 
     with open(
         file_path,
