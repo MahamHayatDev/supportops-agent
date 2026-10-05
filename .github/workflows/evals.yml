@@ -1,8 +1,26 @@
 name: evals
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Check backend code compiles
+        run: python -m compileall backend -q
+
   eval:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
